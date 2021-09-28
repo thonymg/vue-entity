@@ -1,3 +1,5 @@
+import { DataEntity, Entity } from './../typings/index'
+
 export default (key = 'id', sorterFn = null) => {
   const _key = key
   let localState = {
@@ -5,10 +7,11 @@ export default (key = 'id', sorterFn = null) => {
     hasDetailsIds: [],
     entities: {},
     details: {},
-  }
-  const initialState = () => localState
+  } as DataEntity
 
-  let sortCb = (a, b) => {
+  const initialState = (): DataEntity => localState
+
+  let sortCb = (a: Entity, b: Entity): number => {
     return a.id - b.id
   }
 
@@ -16,32 +19,32 @@ export default (key = 'id', sorterFn = null) => {
     sortCb = sorterFn
   }
 
-  const listToObjectWithId = (list = [], key = _key) => {
-    const ids = list.map(i => i[key])
-    let objectFromList = list.reduce((obj, item) => {
-      const { id, ...rest } = item
+  const listToObjectWithId = (list: any[] = [], key: string = _key): DataEntity => {
+    const ids = list.map(i => i[key]) as never[]
+    const objectFromList = list.reduce((obj, item) => {
       return {
         ...obj,
         [item[key]]: item,
       }
     }, {})
-    const hasDetailsIds = []
     localState = {
       entities: objectFromList,
       ids,
-      hasDetailsIds,
+      hasDetailsIds: [],
       details: {},
     }
     return localState
   }
 
-  const upsertObject = (modifier, id) => {
-    return listToEdit => {
-      const { ids, entities, ...previousState } = listToEdit
+  const upsertObject = (modifier: Entity, id: never) => {
+    return (dataEntityToEdit: DataEntity): DataEntity => {
+      const { ids, entities, ...previousState } = dataEntityToEdit
       const editedObject = { ...entities[id], ...modifier }
       const newIds = ids.includes(id) ? ids : ids.concat(id)
       localState = {
-        ...{ entities: { ...listToEdit.entities, ...{ [id]: editedObject } } },
+        ...{
+          entities: { ...dataEntityToEdit.entities, ...{ [id]: editedObject } },
+        },
         ids: newIds,
         ...previousState,
       }
@@ -49,13 +52,14 @@ export default (key = 'id', sorterFn = null) => {
     }
   }
 
-  const deleteObject = id => {
-    return listToEdit => {
-      const { ids } = listToEdit
-      const newIds = ids.includes(id) ? ids.filter(i => i !== id) : ids
-      delete listToEdit.entities[id]
+  const deleteObject = (id: never) => {
+    return (dataEntityToEdit: any): DataEntity => {
+      const { ids } = dataEntityToEdit
+
+      const newIds = ids.includes(id) ? ids.filter((i: any) => i !== id) : ids
+      delete dataEntityToEdit.entities[id]
       localState = {
-        ...listToEdit,
+        ...dataEntityToEdit,
         ids: newIds,
       }
 
@@ -63,11 +67,11 @@ export default (key = 'id', sorterFn = null) => {
     }
   }
 
-  const addManyObject = (objectToAdd, key = _key) => {
-    return listToEdit => {
-      const { ids, ...previousState } = listToObjectWithId(objectToAdd, key)
+  const addManyObject = (objectsToAdd: any[], key: string = _key) => {
+    return (listToEdit: DataEntity): DataEntity => {
+      const { ids, ...previousState } = listToObjectWithId(objectsToAdd, key)
 
-      const newIds = [...ids, ...listToEdit.ids]
+      const newIds = [...ids, ...listToEdit.ids] as any
       const newEntities = {
         entities: { ...listToEdit.entities, ...previousState.entities },
       }
@@ -80,18 +84,21 @@ export default (key = 'id', sorterFn = null) => {
     }
   }
 
-  const upsertDetailsOfObject = (modifier, key = _key) => {
-    return listToEdit => {
+  const upsertDetailsOfObject = (modifier: any, key = _key) => {
+    return (listToEdit: DataEntity) => {
       const { hasDetailsIds, details, ...previousState } = listToEdit
       const editedObject = { ...details[key], ...modifier }
-      const newIds = hasDetailsIds.includes(key)
+
+      const modifierKey = modifier[key]
+
+      const newIds = hasDetailsIds.includes(key as never)
         ? hasDetailsIds
-        : hasDetailsIds.concat(modifier[key])
+        : hasDetailsIds.concat(modifierKey)
       localState = {
         ...{
           details: {
             ...listToEdit.details,
-            ...{ [modifier[key]]: editedObject },
+            ...{ [modifierKey]: editedObject },
           },
         },
         hasDetailsIds: newIds,
@@ -101,24 +108,24 @@ export default (key = 'id', sorterFn = null) => {
     }
   }
 
-  const getEntryById = entry => {
-    return (_state, id) => {
+  const getEntryById = (entry: string) => {
+    return (_state: any, id: string | number) => {
       if (_state && _state[entry]) {
         return _state[entry][id]
       }
     }
   }
 
-  const isExist = entry => {
-    return (_state, id) => {
+  const isExist = (entry: string) => {
+    return (_state: any, id: string | number) => {
       if (_state && _state[entry]) {
         return _state[entry].includes(id) ? true : false
       }
     }
   }
 
-  const compareAndFind = (firstArray, secondArray) => {
-    return callback => {
+  const compareAndFind = (firstArray: any[], secondArray: any[]) => {
+    return (callback: (a: any, b: any) => boolean) => {
       return firstArray.filter(firstElem => {
         return secondArray.find(secondElem => {
           return callback(firstElem, secondElem)
@@ -127,11 +134,16 @@ export default (key = 'id', sorterFn = null) => {
     }
   }
 
-  const compareAndMergeWith = (firstArray, secondArray, nodes = 'nodes', key = _key) => {
-    return callback => {
-      let combinedData = []
+  const compareAndMergeWith = (
+    firstArray: any[],
+    secondArray: any[],
+    nodes = 'nodes',
+    key = _key,
+  ) => {
+    return (callback: (a: any, b: any) => boolean) => {
+      const combinedData = [] as any[]
       firstArray.filter(firstElem => {
-        let secondArrayToPush = []
+        const secondArrayToPush = [] as any[]
         return secondArray.filter(secondElem => {
           if (callback(firstElem, secondElem) === true) {
             secondArrayToPush.push(secondElem)
@@ -171,11 +183,11 @@ export default (key = 'id', sorterFn = null) => {
     hasEntity: isExist('ids'),
     hasDetails: isExist('hasDetailsIds'),
 
-    entityEntries: state => Object.entries(state.entities),
-    detailsEntries: state => Object.entries(state.details),
+    entityEntries: (state: DataEntity) => Object.entries(state.entities),
+    detailsEntries: (state: DataEntity) => Object.entries(state.details),
 
-    entitiesToArray: state => Object.values(state.entities).sort(sortCb),
-    detailsToArray: state => Object.values(state.details).sort(sortCb),
+    entitiesToArray: (state: DataEntity) => Object.values(state.entities).sort(sortCb as any),
+    detailsToArray: (state: DataEntity) => Object.values(state.details).sort(sortCb as any),
 
     compareAndFind,
     compareAndMergeWith,
