@@ -36,6 +36,7 @@
     "@typescript-eslint/parser": "^4.15.2",
     "chokidar-cli": "^2.1.0",
     "eslint": "^7.20.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^5.1.1",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
