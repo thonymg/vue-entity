@@ -1,5 +1,5 @@
 {
-  "name": "vue-entity",
+  "name": "vue-entity-manager",
   "version": "0.1.13",
   "description": "For better data managment in vue/vuex store",
   "main": "./dist/src/index.js",
