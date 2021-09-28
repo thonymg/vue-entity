@@ -67,3 +67,9 @@ junit-testresults.xml
 
 # Misc
 package-lock.json
+
+
+#clojure
+/.clj-kondo
+
+yarn.lock
