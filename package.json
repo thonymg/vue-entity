@@ -1,0 +1,60 @@
+{
+  "name": "vue-entity",
+  "version": "0.0.1",
+  "description": "For better data managment in vue/vuex store",
+  "main": "./dist",
+  "types": "./dist",
+  "author": "ThonyMg <copycates@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "npm run lint && npm run clean-build",
+    "build": "tsc",
+    "clean-build": "rimraf ./dist && mkdir dist",
+    "update": "npx npm-check -u",
+    "prettier": "prettier --loglevel warn --write \"src/**/*.{ts,tsx}\" \"test/**/*.ts\"",
+    "prelint": "npm run prettier",
+    "lint": "eslint --fix --ext .ts --no-error-on-unmatched-pattern \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prepublishOnly": "npm run build",
+    "test": "tap test/**/*.ts",
+    "test:watch": "chokidar \"src/**/*.ts\" \"test/**/*.ts\" -c \"npm run test\" --initial",
+    "test:report": "npm run test | tee out.tap",
+    "test:reporter": "tap-mocha-reporter xunit < out.tap > junit-testresults.xml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thonymg/vue-entity.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/thonymg/vue-entity/issues"
+  },
+  "homepage": "https://github.com/thonymg/vue-entity#readme",
+  "devDependencies": {
+    "@types/node": "^14.17.19",
+    "@types/tap": "^14.10.2",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
+    "chokidar-cli": "^2.1.0",
+    "eslint": "^7.20.0",
+    "husky": "^5.1.1",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "tap": "^14.11.0",
+    "tap-mocha-reporter": "^5.0.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.2"
+  },
+  "files": [
+    "/dist",
+    "/typings"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test && npm run build"
+    }
+  },
+  "dependencies": {},
+  "directories": {
+    "test": "test"
+  }
+}
