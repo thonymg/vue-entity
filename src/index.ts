@@ -168,6 +168,10 @@ export default (key = 'id', sorterFn = null) => {
     }
   }
 
+  const combienToDataEntities = (stateEntry: any, entities: any[]) => {
+    return { ...stateEntry, ...entities }
+  }
+
   return {
     initialState: initialState(),
     getLocalState: localState,
@@ -191,5 +195,6 @@ export default (key = 'id', sorterFn = null) => {
 
     compareAndFind,
     compareAndMergeWith,
+    combienToDataEntities,
   }
 }
